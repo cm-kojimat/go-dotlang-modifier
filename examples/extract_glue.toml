@@ -1,0 +1,45 @@
+[[rule]]
+
+action = "DELETE"
+
+[rule.filter]
+
+expr = "exclude.edge"
+keyword = "\\.aws_glue_"
+
+[[rule]]
+
+action = "DELETE"
+
+[rule.filter]
+
+expr = "exclude.node"
+keyword = "\\.aws_glue_"
+
+[[rule]]
+
+action = "MOD_ATTR"
+
+[rule.attr]
+
+color = "red"
+
+[rule.filter]
+
+expr = "edge"
+key = "from"
+keyword = "\\.aws_glue_"
+
+[[rule]]
+
+action = "MOD_ATTR"
+
+[rule.attr]
+
+color = "blue"
+
+[rule.filter]
+
+expr = "edge"
+key = "to"
+keyword = "\\.aws_glue_"
