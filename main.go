@@ -14,6 +14,12 @@ import (
 	"gonum.org/v1/gonum/graph/formats/dot/ast"
 )
 
+var (
+	errUnsupportAction = errors.New("unsupport action")
+	errUnsupportExpr   = errors.New("unsupport expr")
+	errDeleteStmt      = errors.New("delete statement")
+)
+
 func main() {
 	var (
 		include    string
@@ -31,6 +37,7 @@ func main() {
 		_, err := toml.DecodeFile(configPath, &config)
 		if err != nil {
 			log.Fatal(err)
+
 			return
 		}
 	}
@@ -38,6 +45,7 @@ func main() {
 	rs, err := config.Build()
 	if err != nil {
 		log.Fatal(err)
+
 		return
 	}
 
@@ -62,6 +70,7 @@ func main() {
 	dast, err := dot.Parse(os.Stdin)
 	if err != nil {
 		log.Fatal(err)
+
 		return
 	}
 
@@ -69,6 +78,7 @@ func main() {
 		err := walk(g, rs.Apply)
 		if err != nil {
 			log.Fatal(err)
+
 			return
 		}
 
@@ -100,7 +110,7 @@ func walk(x interface{}, f func(ast.Stmt) error) error {
 			xtx := xs[i-d]
 
 			err := walk(xtx, f)
-			if err == errDeleteStmt {
+			if errors.Is(err, errDeleteStmt) {
 				xs = append(xs[:i-d], xs[i-d+1:]...)
 				d++
 
@@ -121,8 +131,6 @@ func walk(x interface{}, f func(ast.Stmt) error) error {
 		return nil
 	}
 }
-
-var errDeleteStmt = errors.New("delete statement")
 
 type ruleConfigSet struct {
 	Config []ruleConfig `toml:"rule"`
@@ -167,7 +175,7 @@ func (c ruleConfig) Build() (rule, error) {
 		return r.Apply, nil
 	}
 
-	return nil, fmt.Errorf("unspport action: %s", c.Action)
+	return nil, fmt.Errorf("%w: %s", errUnsupportAction, c.Action)
 }
 
 type filterConfig struct {
@@ -205,7 +213,7 @@ func buildFilterByExpr(f filterFunc, expr []string) (filterFunc, error) {
 		return f, nil
 
 	default:
-		return nil, fmt.Errorf("unspport expr: %s", expr[0])
+		return nil, fmt.Errorf("%w: %s", errUnsupportExpr, expr[0])
 	}
 }
 
