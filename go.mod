@@ -12,6 +12,6 @@ require (
 	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
-	gonum.org/v1/gonum v0.7.0
+	gonum.org/v1/gonum v0.8.2
 	google.golang.org/grpc v1.28.0 // indirect
 )
